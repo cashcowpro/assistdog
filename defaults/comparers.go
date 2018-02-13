@@ -86,7 +86,7 @@ func CompareStringPointer(raw string, actual interface{}) error {
 	}
 
 	if val == nil {
-		if raw == NilRawString {
+		if raw == NilString {
 			return nil
 		}
 		return fmt.Errorf("expected %v, but got nil", raw)
@@ -104,7 +104,7 @@ func CompareIntPointer(raw string, actual interface{}) error {
 	}
 
 	if val == nil {
-		if raw == NilRawString {
+		if raw == NilString {
 			return nil
 		}
 		return fmt.Errorf("expected %v, but got nil", raw)
@@ -122,7 +122,7 @@ func CompareFloat32Pointer(raw string, actual interface{}) error {
 	}
 
 	if val == nil {
-		if raw == NilRawString {
+		if raw == NilString {
 			return nil
 		}
 		return fmt.Errorf("expected %v, but got nil", raw)
@@ -140,7 +140,7 @@ func CompareTimePointer(raw string, actual interface{}) error {
 	}
 
 	if val == nil {
-		if raw == NilRawString {
+		if raw == NilString {
 			return nil
 		}
 		return fmt.Errorf("expected %v, but got nil", raw)

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rdumont/assistdog/defaults"
+	"github.com/cashcowpro/assistdog/defaults"
 
 	"github.com/DATA-DOG/godog/gherkin"
 	"github.com/stretchr/testify/assert"
@@ -69,13 +69,14 @@ func TestCreateInstance(t *testing.T) {
 
 	t.Run("successfully for nillable attributes", func(t *testing.T) {
 		table := buildTable([][]string{
-			{"Name", "N/A"},
-			{"Height", "N/A"},
-			{"Weight", "N/A"},
-			{"CreatedAt", "N/A"},
+			{"Name", "<nil>"},
+			{"Height", "<nil>"},
+			{"Weight", "<nil>"},
+			{"CreatedAt", "<nil>"},
 		})
-
-		result, err := NewDefault().CreateInstance(new(nillablePerson), table)
+		assist := NewDefault()
+		assist.RegisterPointerParser("<nil>")
+		result, err := assist.CreateInstance(new(nillablePerson), table)
 		if err != nil {
 			t.Error(err)
 			return

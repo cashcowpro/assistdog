@@ -12,20 +12,20 @@ var supportedTimeLayouts = []string{
 	time.RFC3339Nano,
 }
 
-// NilRawString used to identify "nil" values on the table
-const NilRawString = "N/A"
+// NilString used to identify "nil" values on the table
+var NilString string
 
-// NilInt variable
-var NilInt *int
+// IntPtr variable
+var IntPtr *int
 
-// NilString variable
-var NilString *string
+// StringPtr variable
+var StringPtr *string
 
-// NilTime variable
-var NilTime *time.Time
+// TimePtr variable
+var TimePtr *time.Time
 
-// NilFloat32 variable
-var NilFloat32 *float32
+// Float32Ptr variable
+var Float32Ptr *float32
 
 // ParseString function
 func ParseString(raw string) (interface{}, error) {
@@ -65,16 +65,16 @@ func ParseTime(raw string) (interface{}, error) {
 
 // ParseStringPointer function
 func ParseStringPointer(raw string) (interface{}, error) {
-	if raw == NilRawString {
-		return NilString, nil
+	if raw == NilString {
+		return StringPtr, nil
 	}
 	return &raw, nil
 }
 
 // ParseIntPointer function
 func ParseIntPointer(raw string) (interface{}, error) {
-	if raw == NilRawString {
-		return NilInt, nil
+	if raw == NilString {
+		return IntPtr, nil
 	}
 
 	parsedInt, err := ParseInt(raw)
@@ -87,8 +87,8 @@ func ParseIntPointer(raw string) (interface{}, error) {
 
 // ParseFloat32Pointer function
 func ParseFloat32Pointer(raw string) (interface{}, error) {
-	if raw == NilRawString {
-		return NilFloat32, nil
+	if raw == NilString {
+		return Float32Ptr, nil
 	}
 
 	parsedFloat32, err := ParseFloat32(raw)
@@ -101,8 +101,8 @@ func ParseFloat32Pointer(raw string) (interface{}, error) {
 
 // ParseTimePointer function
 func ParseTimePointer(raw string) (interface{}, error) {
-	if raw == NilRawString {
-		return NilTime, nil
+	if raw == NilString {
+		return TimePtr, nil
 	}
 
 	parsedTime, err := ParseTime(raw)

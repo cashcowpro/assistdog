@@ -12,25 +12,31 @@ import (
 )
 
 var defaultParsers = map[interface{}]ParseFunc{
-	"":                  defaults.ParseString,
-	0:                   defaults.ParseInt,
-	float32(0.0):        defaults.ParseFloat32,
-	time.Time{}:         defaults.ParseTime,
-	defaults.NilString:  defaults.ParseStringPointer,
-	defaults.NilInt:     defaults.ParseIntPointer,
-	defaults.NilFloat32: defaults.ParseFloat32Pointer,
-	defaults.NilTime:    defaults.ParseTimePointer,
+	"":           defaults.ParseString,
+	0:            defaults.ParseInt,
+	float32(0.0): defaults.ParseFloat32,
+	time.Time{}:  defaults.ParseTime,
+}
+
+var defaultPointerParsers = map[interface{}]ParseFunc{
+	defaults.StringPtr:  defaults.ParseStringPointer,
+	defaults.IntPtr:     defaults.ParseIntPointer,
+	defaults.Float32Ptr: defaults.ParseFloat32Pointer,
+	defaults.TimePtr:    defaults.ParseTimePointer,
 }
 
 var defaultComparers = map[interface{}]CompareFunc{
-	"":                  defaults.CompareString,
-	0:                   defaults.CompareInt,
-	float32(0.0):        defaults.CompareFloat32,
-	time.Time{}:         defaults.CompareTime,
-	defaults.NilString:  defaults.CompareStringPointer,
-	defaults.NilInt:     defaults.CompareIntPointer,
-	defaults.NilFloat32: defaults.CompareFloat32Pointer,
-	defaults.NilTime:    defaults.CompareTimePointer,
+	"":           defaults.CompareString,
+	0:            defaults.CompareInt,
+	float32(0.0): defaults.CompareFloat32,
+	time.Time{}:  defaults.CompareTime,
+}
+
+var defaultPointerComparers = map[interface{}]CompareFunc{
+	defaults.StringPtr:  defaults.CompareStringPointer,
+	defaults.IntPtr:     defaults.CompareIntPointer,
+	defaults.Float32Ptr: defaults.CompareFloat32Pointer,
+	defaults.TimePtr:    defaults.CompareTimePointer,
 }
 
 // ParseFunc parses a raw string value from a table into a given type.
@@ -46,14 +52,8 @@ type CompareFunc func(raw string, actual interface{}) error
 // NewDefault creates a new Assist instance with all the default parsers and comparers.
 func NewDefault() *Assist {
 	a := new(Assist)
-	for tp, p := range defaultParsers {
-		a.RegisterParser(tp, p)
-	}
-
-	for tp, c := range defaultComparers {
-		a.RegisterComparer(tp, c)
-	}
-
+	a.registerParsers(defaultParsers)
+	a.registerComparers(defaultComparers)
 	return a
 }
 
@@ -96,6 +96,14 @@ func (a *Assist) RemoveComparer(i interface{}) {
 	defer a.lock.Unlock()
 	a.assertInit()
 	delete(a.comparers, reflect.TypeOf(i))
+}
+
+// RegisterPointerParser registers a new value parser for a type.
+// If a previous parser already exists for the given type, it will be replaced.
+func (a *Assist) RegisterPointerParser(nilStr string) {
+	defaults.NilString = nilStr
+	a.registerParsers(defaultPointerParsers)
+	a.registerComparers(defaultPointerComparers)
 }
 
 // ParseMap takes a Gherkin table and returns a map that represents it.
@@ -287,6 +295,18 @@ func (a *Assist) compareToInstance(actual interface{}, table map[string]string) 
 	}
 
 	return errs
+}
+
+func (a *Assist) registerParsers(parsers map[interface{}]ParseFunc) {
+	for tp, p := range parsers {
+		a.RegisterParser(tp, p)
+	}
+}
+
+func (a *Assist) registerComparers(comparers map[interface{}]CompareFunc) {
+	for tp, c := range comparers {
+		a.RegisterComparer(tp, c)
+	}
 }
 
 func (a *Assist) findParser(tp reflect.Type) (ParseFunc, bool) {
